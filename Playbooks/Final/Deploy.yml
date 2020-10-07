@@ -1,0 +1,21 @@
+---
+- hosts: workers
+  become: true
+  tasks:
+  - name: Making directory
+    shell: "mkdir -p /root/epicapp1/"
+
+  - name: Copying file
+    copy: 
+      src: /root/EPIC_app1/{{ item }}
+      dest: /root/epicapp1/{{ item }}
+    loop: [ 'Dockerfile', 'setenv.sh', 'epic-app1.war']
+
+  - name: Building Docker image
+    shell: "docker build -t epic-app1 /root/epicapp1/."
+ 
+  - name: Creating Container
+    docker_container:
+      name: Epic-app1_Dock
+      image: epic-app1
+      state: present
